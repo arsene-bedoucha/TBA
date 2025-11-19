@@ -60,7 +60,7 @@ class Game:
         cuisine.exits = {"N" : reserve, "E" : hall, "S" : escaliersB, "O" : None, "Up" : None, "Down" : None}
         parloire.exits = {"N" : accueil, "E" : None, "S" : hall, "O" : None, "Up" : None, "Down" : None}
         infirmerie.exits = {"N" : accueil, "E" : None, "S" : None, "O" : hall, "Up" : None, "Down" : None}
-        accueil.exits = {"N" : sortie, "E" : infirmerie, "S" : parloire, "O" : reserve, "Up" : None, "Down" : None}
+        accueil.exits = {"N" : sortie, "E" : infirmerie, "S" : parloire, "O" : None, "Up" : None, "Down" : None}
         reserve.exits = {"N" : None, "E" : accueil, "S" : cuisine, "O" : None, "Up" : None, "Down" : None}
         escaliersH.exits = {"N" : None, "E" : cellule, "S" : ma_cellule, "O" : None, "Up" : None, "Down" : escaliersB}
         escaliersB.exits = {"N" : cuisine, "E" : hall, "S" : None, "O" : None, "Up" : escaliersH, "Down" : None}
