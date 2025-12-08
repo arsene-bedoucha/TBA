@@ -47,15 +47,30 @@ class Actions:
         
         player = game.player
         l = len(list_of_words)
-        # If the number of parameters is incorrect, print an error message and return False.
         if l != number_of_parameters + 1:
             command_word = list_of_words[0]
             print(MSG1.format(command_word=command_word))
             return False
 
-        # Get the direction from the list of words.
         direction = list_of_words[1]
-        # Move the player in the direction specified by the parameter.
+
+        directions_possibles = [(["N", "Nord", "nord", "NORD", "n"], "N"), 
+                                (["S", "Sud", "sud", "SUD", "s"], "S"),
+                                (["E", "Est", "est", "EST", "e"], "E"),
+                                (["O", "Ouest", "ouest", "OUEST", "o"], "O"),
+                                (["Up", "UP", "haut", "HAUT", "Haut", "up", "U", "H", "u", "h"], "Up"),
+                                (["Down", "down", "DOWN", "BAS", "Bas", "bas", "B", "D", "d", "b"], "Down")]
+        direction = list_of_words[1].upper()
+        for liste in directions_possibles :
+            if direction in liste[0] :
+                direction = liste[1]
+
+        if direction not in game.directions_valides:
+            print(f"\n La direction {direction} n'est pas valide.")
+            print(game.player.current_room.get_long_description())
+
+            return False
+        
         player.move(direction)
         return True
 
@@ -85,13 +100,11 @@ class Actions:
 
         """
         l = len(list_of_words)
-        # If the number of parameters is incorrect, print an error message and return False.
         if l != number_of_parameters + 1:
             command_word = list_of_words[0]
             print(MSG0.format(command_word=command_word))
             return False
         
-        # Set the finished attribute of the game object to True.
         player = game.player
         msg = f"\nMerci {player.name} d'avoir joué. Au revoir.\n"
         print(msg)
@@ -124,14 +137,12 @@ class Actions:
 
         """
 
-        # If the number of parameters is incorrect, print an error message and return False.
         l = len(list_of_words)
         if l != number_of_parameters + 1:
             command_word = list_of_words[0]
             print(MSG0.format(command_word=command_word))
             return False
         
-        # Print the list of available commands.
         print("\nVoici les commandes disponibles:")
         for command in game.commands.values():
             print("\t- " + str(command))
