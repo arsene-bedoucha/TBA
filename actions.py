@@ -148,3 +148,53 @@ class Actions:
             print("\t- " + str(command))
         print()
         return True
+    
+    def history(game, list_of_words, number_of_parameters):
+
+        l = len(list_of_words)
+        if l != number_of_parameters + 1:
+            command_word = list_of_words[0]
+            print(MSG0.format(command_word=command_word))
+            return False
+        
+        player = game.player
+
+        if len(player.history) == 0:
+            print("\n Vous n'avez pas encore d'historique \n")
+            return True
+    
+        print("\nVotre historique :")
+        for salle in player.history:
+            print("\t- " + salle.name)
+        print()
+        return True
+    
+    def back(game, list_of_words, number_of_parameters):
+        l = len(list_of_words)
+        if l != number_of_parameters + 1:
+            command_word = list_of_words[0]
+            print(MSG0.format(command_word=command_word))
+            return False
+
+        player = game.player
+        historique = player.get_history()
+
+        if len(historique) == 0:
+            print("\nImpossible de revenir en arrière : aucun historique disponible.\n")
+            return False
+
+        previous_room = historique.pop()
+
+        player.current_room = previous_room
+
+        print(f"\nVous revenez dans : {previous_room.name}\n")
+
+        if len(historique) == 0:
+            print("Votre historique est maintenant vide.\n")
+        else:
+            print("Historique restant :")
+            for salle in historique:
+                print("\t- " + salle.name)
+            print()
+
+        return True
