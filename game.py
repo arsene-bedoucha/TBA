@@ -2,10 +2,12 @@
 
 # Import modules
 
+
 from room import Room
 from player import Player
 from command import Command
 from actions import Actions
+from item import Item
 
 class Game:
 
@@ -28,10 +30,30 @@ class Game:
         self.commands["quit"] = quit
         go = Command("go", " <direction> : se déplacer dans une direction cardinale (N, E, S, O, Up, Down)", Actions.go, 1)
         self.commands["go"] = go
+
+        # Commande 'Historique' #
         history = Command("history", " : afficher votre historique", Actions.history, 0)
         self.commands["history"] = history
+
+        # Commande 'Back' #
         back = Command("back", " : revenir en arrière", Actions.back, 0)
         self.commands["back"] = back
+
+        # Commande 'Look' #
+        look = Command("look", " : observer l'environnement", Actions.look, 0)
+        self.commands["look"] = look
+
+        # Commande 'Take' #
+        take = Command("take", " <item> : prendre un item", Actions.take, 1)
+        self.commands["take"] = take
+
+        # Commande 'Drop' #
+        drop = Command("drop", " <item> : reposer un item", Actions.drop, 1)
+        self.commands["drop"] = drop
+
+        # Commande 'Check' #
+        check = Command("check", " : vérifier votre inventaire", Actions.check, 0)
+        self.commands["check"] = check
 
         # Setup rooms
 
@@ -57,6 +79,62 @@ class Game:
         self.rooms.append(ma_cellule)
         sortie = Room("Sortie", "à la sortie. Une lourde grille s est abattue, scellant le passage comme si la prison elle-même refusait de vous laisser partir. De l autre côté, la lumière vacille et projette des ombres qui semblent se rapprocher lentement. Quand vous touchez les barreaux, un frisson glacial remonte votre bras… comme un avertissement.")
         self.rooms.append(sortie)
+
+        # Setup items
+
+        hall.inventory["note"] = Item(
+            "note",
+            "un morceau de papier jauni avec des symboles étranges",
+            1
+        )
+
+        hall.inventory["barre"] = Item(
+            "Barre (fer)",
+            "c'est très lourd !",
+            11
+        )
+
+        cuisine.inventory["knife"] = Item(
+            "knife",
+            "un couteau rouillé mais encore utilisable",
+            1
+        )
+
+        parloir.inventory["téléphone"] = Item(
+            "téléphone",
+            "un ancien téléphone à touches est posé",
+            1
+        )
+        
+        infirmerie.inventory["médicaments"] = Item(
+            "médicaments",
+            "une armoire pleine de médicaments",
+            1
+        )
+
+        infirmerie.inventory["pansements"] = Item(
+            "pansements",
+            "de quoi se soigner peut toujours être utile",
+            1
+        )
+
+        reserve.inventory["barre de fer"] = Item(
+            "barre de fer",
+            "une énorme barre de fer est posée au sol",
+            3
+        )
+
+        escaliersH.inventory["plan"] = Item(
+            "plan",
+            "un plan avec les issues de la prison",
+            1
+        )
+
+        escaliersB.inventory["plan"] = Item(
+            "plan",
+            "un plan avec les issues de la prison",
+            1
+        )
 
         # Create exits for rooms
 
@@ -115,7 +193,6 @@ class Game:
         print("Entrez 'help' si vous avez besoin d'aide.")
         
         print(self.player.current_room.get_long_description())
-    
 
 def main():
     # Create a game object and play the game

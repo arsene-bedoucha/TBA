@@ -183,8 +183,7 @@ class Actions:
             print("\nImpossible de revenir en arrière : aucun historique disponible.\n")
             return False
 
-        previous_room = historique.pop()
-
+        previous_room = historique.pop(0)
         player.current_room = previous_room
 
         print(f"\nVous revenez dans : {previous_room.name}\n")
@@ -196,5 +195,83 @@ class Actions:
             for salle in historique:
                 print("\t- " + salle.name)
             print()
+        return True
+    
+    def check(game, list_of_words, number_of_parameters):
+        l = len(list_of_words)
+        if l != number_of_parameters + 1:
+            command_word = list_of_words[0]
+            print(MSG0.format(command_word=command_word))
+            return False
 
+        player = game.player
+        print("\n" + player.get_inventory() + "\n")     # affiche l'inventaire du joueur en faisant appel à la fonction get_inventory (fichier player.py).
+        return True
+    
+    def look(game, list_of_words, number_of_parameters):
+        l = len(list_of_words)
+        if l != number_of_parameters + 1:
+            command_word = list_of_words[0]
+            print(MSG0.format(command_word=command_word))
+            return False
+        
+        room = game.player.current_room
+        print(room.get_inventory())
+
+        return True
+
+    def take(game, list_of_words, number_of_parameters):
+        l = len(list_of_words)
+        if l != number_of_parameters + 1:
+            command_word = list_of_words[0]
+            print(MSG0.format(command_word=command_word))
+            return False
+        
+        item_name = list_of_words[1]
+        
+        player = game.player
+        room = game.player.current_room
+
+        if item_name not in room.inventory:
+            print(f"\nL'item '{item_name}' n'est pas présent ici.\n")       # objet pas dans la pièce.
+            return False
+
+        item = room.inventory[item_name]
+        poids = player.get_current_weight()
+
+        if poids + item.weight > player.poids_max :
+            print(f"Impossible de prendre cet objet : poids dépassé ({poids}/{player.poids_max})\n")
+            return False
+        
+        poids = player.get_current_weight() + item.weight
+        item = room.inventory.pop(item_name)
+        player.inventory[item_name] = item
+
+        print(f"\nVous avez pris cet objet : {item_name}. \nVoici le poids actuel de votre inventaire : {poids}/{player.poids_max} kg.\n") 
+        return True
+    
+    def drop(game, list_of_words, number_of_parameters):
+        l = len(list_of_words)
+        if l != number_of_parameters + 1:
+            command_word = list_of_words[0]
+            print(MSG0.format(command_word=command_word))
+            return False
+        
+        item_name = list_of_words[1]
+        
+        player = game.player
+        room = game.player.current_room
+
+        item = player.inventory[item_name]
+        poids = player.get_current_weight()
+
+        if item_name not in player.inventory:
+            print(f"\nL'item '{item_name}' n'est pas dans votre inventaire.\n")       # objet pas dans l'inventaire
+            return False
+        
+        poids = player.get_current_weight() - item.weight
+        item = player.inventory.pop(item_name)
+        room.inventory[item_name] = item
+
+        print(f"\nVous avez jeté cet objet : {item_name}. \nVoici le poids de votre invenaire actuellement : {poids}/{player.poids_max} kg.\n") 
         return True
