@@ -10,6 +10,7 @@ class Room:
         self.description = description
         self.exits = {}
         self.inventory = {}                 # dictionnaire pour l'inventaire de la pièce
+        self.characters = {}
 
     # Retourne la salle accessible dans une direction donnée
     def get_exit(self, direction):
@@ -32,10 +33,12 @@ class Room:
         return f"\nVous êtes {self.description}\n\n{self.get_exit_string()}\n"
     
     def get_inventory(self) :
-        if not self.inventory :
+        if not self.inventory and not self.characters:
             return "Il n'y a rien ici. \n"
         
         texte = "La pièce contient :\n"
         for item in self.inventory.values():
             texte = texte + " - " + str(item) + "\n"
+        for character in self.characters.values():
+            texte = texte + " - " + str(character) + "\n"
         return texte
