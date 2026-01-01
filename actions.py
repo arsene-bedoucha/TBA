@@ -72,6 +72,17 @@ class Actions:
             return False
         
         player.move(direction)
+
+        all_characters = []
+
+        for room in game.rooms:
+            all_characters.extend(room.characters.values())
+
+        for character in list(all_characters):
+            character.move()
+
+
+
         return True
 
     def quit(game, list_of_words, number_of_parameters):
@@ -274,4 +285,22 @@ class Actions:
         room.inventory[item_name] = item
 
         print(f"\nVous avez jeté cet objet : {item_name}. \nVoici le poids de votre invenaire actuellement : {poids}/{player.poids_max} kg.\n") 
+        return True
+    
+    def talk(game, list_of_words, number_of_parameters):
+        l = len(list_of_words)
+        if l != number_of_parameters + 1:
+            command_word = list_of_words[0]
+            print(MSG1.format(command_word=command_word))
+            return False
+
+        name = list_of_words[1]
+        room = game.player.current_room
+
+        if name not in room.characters:
+            print(f"\n{name} n'est pas ici.\n")
+            return False
+
+        character = room.characters[name]
+        character.get_msg()
         return True

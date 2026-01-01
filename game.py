@@ -2,12 +2,13 @@
 
 # Import modules
 
-
 from room import Room
 from player import Player
 from command import Command
 from actions import Actions
 from item import Item
+from character import Character
+from config import DEBUG
 
 class Game:
 
@@ -54,6 +55,10 @@ class Game:
         # Commande 'Check' #
         check = Command("check", " : vérifier votre inventaire", Actions.check, 0)
         self.commands["check"] = check
+
+        talk = Command("talk", " <personnage> : parler à un personnage", Actions.talk, 1)
+        self.commands["talk"] = talk
+
 
         # Setup rooms
 
@@ -159,6 +164,36 @@ class Game:
         for room in self.rooms:
             self.directions_valides.update(room.exits.keys())
 
+        # Setup characters
+
+        hall.characters["Bob"] = Character(
+            "Bob",
+            "un gentil monsieur",
+            hall,
+            ["Salut, moi c'est Bob !"]
+        )
+
+        cuisine.characters["Le Cuisto"] = Character(
+            "Le Cuisto",
+            "un homme effrayant, transpirant, faisant des plats plus que douteux.",
+            cuisine,
+            ["Viens manger mon enfant... !"]
+        )
+
+        hall.characters["Alice"] = Character(
+            "Alice",
+            "une gentile dame",
+            hall,
+            ["Salut, moi c'est Alice !"]
+        )
+
+        cellule.characters["Prisonier"] = Character(
+            "Prisonier",
+            "un homme blessé, toujours tapis dans l'ombre",
+            hall,
+            ["Aides moi, poar pitié."]
+        )
+
     # Play the game
     def play(self):
         self.setup()
@@ -167,6 +202,7 @@ class Game:
         while not self.finished:
             # Get the command from the player
             self.process_command(input("> "))
+                
         return None
 
     # Process the command entered by the player

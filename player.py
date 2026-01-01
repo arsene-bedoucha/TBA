@@ -19,7 +19,7 @@ class Player:
         texte = "Vous disposez des items suivant :\n"
         for item in self.inventory.values() :
             texte = texte + " - " + str(item) + "\n"
-        return texte
+        return texte 
 
     def get_current_weight(self):
         poids = 0
