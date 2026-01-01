@@ -170,28 +170,21 @@ class Game:
             "Bob",
             "un gentil monsieur",
             hall,
-            ["Salut, moi c'est Bob !"]
+            ["Salut, moi c'est Bob !", "Tu veux un indice ?"]
         )
 
         cuisine.characters["Le Cuisto"] = Character(
             "Le Cuisto",
             "un homme effrayant, transpirant, faisant des plats plus que douteux.",
             cuisine,
-            ["Viens manger mon enfant... !"]
+            ["Viens manger mon enfant... !", "Tu veux du ragout... ?"]
         )
 
         hall.characters["Alice"] = Character(
             "Alice",
             "une gentile dame",
             hall,
-            ["Salut, moi c'est Alice !"]
-        )
-
-        cellule.characters["Prisonier"] = Character(
-            "Prisonier",
-            "un homme blessé, toujours tapis dans l'ombre",
-            hall,
-            ["Aides moi, poar pitié."]
+            ["Salut, moi c'est Alice !", "J'aime les poupées !"]
         )
 
     # Play the game
