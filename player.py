@@ -3,7 +3,7 @@
 from quest import QuestManager
 
 class Player:
-    def __init__(self, name, poids_max = 10):
+    def __init__(self, name, poids_max = 50, points_min = 150):
         self.name = name
         self.current_room = None
         self.history = []           # liste pour l'historique.
@@ -12,6 +12,8 @@ class Player:
         self.move_count = 0
         self.quest_manager = QuestManager(self)
         self.rewards = []
+        self.points = []
+        self.points_min = points_min
 
     # Méthode pour retourner l'historique
     def get_history(self):
@@ -53,6 +55,14 @@ class Player:
 
         return True
     
+    def teleport_to_exit(self, exit_room):
+        if exit_room.name != "Sortie":
+            return False
+
+        self.current_room = exit_room
+        print(self.current_room.get_long_description())
+        return True
+    
     def add_reward(self, reward):
         """
         Add a reward to the player's rewards list.
@@ -76,8 +86,7 @@ class Player:
         if reward and reward not in self.rewards:
             self.rewards.append(reward)
             print(f"\n🎁 Vous avez obtenu: {reward}\n")
-
-
+    
     def show_rewards(self):
         """
         Display all rewards earned by the player.
@@ -106,3 +115,20 @@ class Player:
             for reward in self.rewards:
                 print(f"  • {reward}")
             print()
+
+    def add_points(self, points):
+        if points is not None:
+            self.points.append(points)
+            print(f"\n Vous avez obtenu: {points} points\n")
+
+    def score(self):
+        score = sum(self.points)
+        return score
+
+    def show_points(self):
+        if not self.points:
+            print("Vous n'avez aucun point.\n")
+            return
+
+        score = self.score()
+        print("Votre score : " + str(score) + " points")

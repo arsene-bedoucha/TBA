@@ -15,7 +15,7 @@ class Quest:
     """
 
 
-    def __init__(self, title, description, objectives=None, reward=None):
+    def __init__(self, title, description, objectives=None, reward=None, points = None):
         """
         Initialize a new quest.
         
@@ -44,6 +44,7 @@ class Quest:
         self.is_completed = False
         self.is_active = False
         self.reward = reward
+        self.points = int(points)
 
 
     def activate(self):
@@ -131,6 +132,7 @@ class Quest:
                 print(f"🎁 Récompense: {self.reward}")
                 if player:
                     player.add_reward(self.reward)
+                    player.add_points(self.points)
             print()
 
 
@@ -737,3 +739,7 @@ class QuestManager:
             print(quest.get_details(current_counts))
         else:
             print(f"\nQuête '{quest_title}' non trouvée.\n")
+
+    def activate_all_quests(self):
+        for quest in self.quests:
+            self.activate_quest(quest.title)

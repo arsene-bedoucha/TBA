@@ -90,7 +90,15 @@ class Game:
                                            , " : afficher vos récompenses"
                                            , Actions.rewards
                                            , 0)
-
+        self.commands["points"] = Command("points"
+                                           , " : afficher votre score"
+                                           , Actions.points
+                                           , 0)
+        self.commands["activate_all_quests"] = Command("activate_all_quests"
+                                                        , " : activer toutes les quetes"
+                                                        , Actions.activate_all_quests
+                                                        , 0)
+        
     # Setup rooms
     def _setup_rooms(self):
         """Initialize all rooms and their exits."""
@@ -128,7 +136,7 @@ class Game:
         s = "à la sortie. Une lourde grille s est abattue, scellant le passage comme si la prison elle-même refusait de vous laisser partir. De l autre côté, la lumière vacille et projette des ombres qui semblent se rapprocher lentement. Quand vous touchez les barreaux, un frisson glacial remonte votre bras… comme un avertissement."
         sortie = Room("Sortie", s)
         
-        for room in [hall, parloir, cuisine, infirmerie, accueil, reserve, escaliersH, escaliersB, cellule, ma_cellule, sortie]:
+        for room in [hall, cuisine, parloir, infirmerie, accueil, reserve, escaliersH, escaliersB, cellule, ma_cellule, sortie]:
             self.rooms.append(room)
 
         # Create exits for rooms
@@ -137,32 +145,24 @@ class Game:
         cuisine.exits = {"N" : reserve, "E" : hall, "S" : escaliersB, "O" : None, "Up" : None, "Down" : None}
         parloir.exits = {"N" : accueil, "E" : None, "S" : hall, "O" : None, "Up" : None, "Down" : None}
         infirmerie.exits = {"N" : accueil, "E" : None, "S" : None, "O" : hall, "Up" : None, "Down" : None}
-        accueil.exits = {"N" : sortie, "E" : infirmerie, "S" : parloir, "O" : None, "Up" : None, "Down" : None}
+        accueil.exits = {"N" : None, "E" : infirmerie, "S" : parloir, "O" : None, "Up" : None, "Down" : None}
         reserve.exits = {"N" : None, "E" : accueil, "S" : cuisine, "O" : None, "Up" : None, "Down" : None}
         escaliersH.exits = {"N" : None, "E" : cellule, "S" : ma_cellule, "O" : None, "Up" : None, "Down" : escaliersB}
         escaliersB.exits = {"N" : cuisine, "E" : hall, "S" : None, "O" : None, "Up" : escaliersH, "Down" : None}
         cellule.exits = {"N" : None, "E" : None, "S" : None, "O" : escaliersH, "Up" : None, "Down" : None}
         ma_cellule.exits = {"N" : escaliersH, "E" : None, "S" : None, "O" : None, "Up" : None, "Down" : None}
-        sortie.exits = {"N" : None, "E" : None, "S" : accueil, "O" : None, "Up" : None, "Down" : None}
+        sortie.exits = {"N" : None, "E" : None, "S" : None, "O" : None, "Up" : None, "Down" : None}
 
 
     # Setup items
     def _setup_items(self):
-        hall = self.rooms[0]
-        cuisine = self.rooms[2]
-        parloir = self.rooms[1]
+        parloir = self.rooms[2]
         infirmerie = self.rooms[3]
         accueil = self.rooms[4]
         reserve = self.rooms[5]
-        escaliersH = self.rooms[6]
         escaliersB = self.rooms[7]
         cellule = self.rooms[8]
         ma_cellule = self.rooms[9]
-        sortie = self.rooms[10]
-
-        hall.inventory["note"] = Item("note", "un morceau de papier jauni avec des symboles étranges", 1)
-        hall.inventory["barre"] = Item("Barre (fer)", "c'est très lourd !", 11)
-        cuisine.inventory["knife"] = Item("knife", "un couteau rouillé mais encore utilisable", 1)
 
         parloir.inventory["téléphone"] = Item(
             "téléphone",
@@ -170,34 +170,40 @@ class Game:
             1
         )
         
+        cellule.inventory["coffre"] = Item(
+            "coffre",
+            "Un énorme coffre habritant surement l'objet que vous cherchez. Néanmoins, un problème, comment allez vous l'ouvrir ?",
+            30
+        )
+
+        accueil.inventory["clé"] = Item(
+            "clé",
+            "une clé, là, sur le bureau.",
+            2
+        )
+
         infirmerie.inventory["médicaments"] = Item(
             "médicaments",
             "une armoire pleine de médicaments",
-            1
-        )
-
-        infirmerie.inventory["pansements"] = Item(
-            "pansements",
-            "de quoi se soigner peut toujours être utile",
-            1
-        )
-
-        reserve.inventory["barre de fer"] = Item(
-            "barre de fer",
-            "une énorme barre de fer est posée au sol",
-            3
-        )
-
-        escaliersH.inventory["plan"] = Item(
-            "plan",
-            "un plan avec les issues de la prison",
-            1
+            5
         )
 
         escaliersB.inventory["plan"] = Item(
             "plan",
             "un plan avec les issues de la prison",
             1
+        )
+
+        reserve.inventory["panier"] = Item(
+            "panier",
+            "un énorme panier repas plein de bons produits, mais pouvez-vous réellement le manger ?",
+            10
+        )
+
+        ma_cellule.inventory["livre"] = Item(
+            "livre",
+            "de quoi se cultiver un peu",
+            2
         )
 
     # Setup player and starting room
@@ -216,66 +222,135 @@ class Game:
     # Setup characters
     def _setup_characters(self):
         hall = self.rooms[0]
-        cuisine = self.rooms[2]
-        parloir = self.rooms[1]
-        infirmerie = self.rooms[3]
-        accueil = self.rooms[4]
-        reserve = self.rooms[5]
-        escaliersH = self.rooms[6]
-        escaliersB = self.rooms[7]
+        parloir = self.rooms[2]
         cellule = self.rooms[8]
-        ma_cellule = self.rooms[9]
-        sortie = self.rooms[10]
         
-        hall.characters["Bob"] = Character(
-            "Bob",
-            "un gentil monsieur",
+        hall.characters["Guardien"] = Character(
+            "Guardien",
+            "votre seul allié dans cet enfer...",
             hall,
-            ["Salut, moi c'est Bob !", "Veux tu un indice ?", "Montre moi la carte"]
+            ["Salut, je vais te donner le secret pour sortir", "Seul l'objet magique te guidera à la sortie !"]
         )
 
-        cuisine.characters["Cuisto"] = Character(
-            "Cuisto",
-            "un homme effrayant, transpirant, faisant des plats plus que douteux.",
-            cuisine,
-            ["Viens manger mon enfant... !", "Veux-tu du ragout ?"]
+        parloir.characters["Sage"] = Character(
+            "Sage",
+            "le plus ancien détenu, aucun secret ne lui échappe",
+            parloir,
+            ["Je connais le seul moyen de trouver de quoi sortir", "Si tu le veux, ramène moi de quoi manger..."]
         )
 
-        hall.characters["Alice"] = Character(
-            "Alice",
-            "une gentile dame",
-            hall,
-            ["Salut, moi c'est Alice !", "J'aime les poupées"]
+        cellule.characters["Prisonnier"] = Character(
+            "Prisonnier",
+            "un homme douteux, tapis dans le noir",
+            cellule,
+            ["Le coffre que tu recherches ici", "Je n'ai jamais réussi à l'ouvrir", "Au fait, sais-tu où est mon livre ?"]
         )
 
     # Setup quests
     def _setup_quests(self):
         """Initialize all quests."""
-        exploration_quest = Quest(
-            title="Quete de reconnaissance",
-            description="Explorez ces lieux clés pour votre réussite dans le jeu : Infirmerie, Cuisine et Parloir",
-            objectives=["Visiter Cuisine", "Visiter Infirmerie", "Visiter Parloir"],
-            reward="Titre de l'explorateur"
+
+        OuvertureCoffre = Quest(
+            title = "OuvrirCoffre",
+            description = "Ouvrir le coffre",
+            objectives = ["drop clé"],
+            reward = "Expert en serurerie",
+            points = 70
         )
 
-        item_quest = Quest(
-            title = "Première quete",
+        exploration_quest1 = Quest(
+            title="Explorateur",
+            description="Explorez ces lieux clés pour votre réussite dans le jeu : infirmerie, cuisine et cellule",
+            objectives=["Visiter Cuisine", "Visiter Infirmerie", "Visiter Cellule"],
+            reward="Explorateur de l'extreme",
+            points = 10
+        )
+
+        exploration_quest2 = Quest(
+            title="Visiteur",
+            description="Aller dans votre cellule",
+            objectives=["Visiter ma_cellule"],
+            reward="Le lieu sûr",
+            points = 10
+        )
+
+        item_quest1 = Quest(
+            title = "LePlan",
             description = "Retenez bien cette indication afin de trouver la carte de la prison et pouvoir vous repérer. Dans le hall, seul le sud vous guidera...",
             objectives = ["take plan"],
-            reward = "Guide du savoir"
+            reward = "Guide du savoir",
+            points = 10
         )
 
-        interaction_quest = Quest(
-            title = "Quete d'interaction",
-            description = "Parler avec le cuisinier",
-            objectives = ["talk Cuisto"],
-            reward = "Trophée de sociabilité"
+        item_quest2 = Quest(
+            title = "LesMédocs",
+            description = "Des médicaments peuvent toujours servir dans un environnement comme celui-ci",
+            objectives = ["take médicaments"],
+            reward = "Infirmier de l'extrême",
+            points = 10
+        )
+
+        item_quest3 = Quest(
+            title = "LaClé",
+            description = "Trouver cette clé, trouver le coffre, c'est trouver la sortie",
+            objectives = ["take clé"],
+            reward = "Premier pas vers la sortie",
+            points = 10
+        )
+
+        item_quest4 = Quest(
+            title = "LeLivre",
+            description = "Un petit moment culture ?",
+            objectives = ["take livre"],
+            reward = "Vive le savoir",
+            points = 10
+        )
+
+        item_quest5 = Quest(
+            title = "LePanier",
+            description = "Trouver le panier",
+            objectives = ["take panier"],
+            reward = "Gros gouton",
+            points = 10
+        )
+
+        interaction_quest1 = Quest(
+            title = "LePrisonnier",
+            description = "Parler avec un prisonnier",
+            objectives = ["talk Prisonnier"],
+            reward = "As de la sociabilité",
+            points = 20
+        )
+
+        interaction_quest2 = Quest(
+            title = "LeGuardien",
+            description = "Parler avec un guardien",
+            objectives = ["talk Guardien"],
+            reward = "Maitre de la sociabilité",
+            points = 20
+        )
+
+        NourrireSage = Quest(
+            title = "NourrireSage",
+            description = "Deposer de la nourriture là où il reste tout le temps : le parloir",
+            objectives = ["drop panier"],
+            reward = "Indice : Seul le nord te guidera vers la clé",
+            points = 20
         )
 
         # Ajouter la quête au gestionnaire de quêtes du joueur
-        self.player.quest_manager.add_quest(exploration_quest)
-        self.player.quest_manager.add_quest(item_quest)
-        self.player.quest_manager.add_quest(interaction_quest)
+        self.player.quest_manager.add_quest(OuvertureCoffre)
+        self.player.quest_manager.add_quest(exploration_quest1)
+        self.player.quest_manager.add_quest(exploration_quest2)
+        self.player.quest_manager.add_quest(item_quest1)
+        self.player.quest_manager.add_quest(item_quest2)
+        self.player.quest_manager.add_quest(item_quest3)
+        self.player.quest_manager.add_quest(item_quest4)
+        self.player.quest_manager.add_quest(item_quest5)
+        self.player.quest_manager.add_quest(interaction_quest1)
+        self.player.quest_manager.add_quest(interaction_quest2)
+        self.player.quest_manager.add_quest(NourrireSage)
+        
 
     # Play the game
     def play(self):
@@ -283,9 +358,14 @@ class Game:
         self.print_welcome()
         # Loop until the game is finished
         while not self.finished:
-            # Get the command from the player
             self.process_command(input("> "))
-                
+
+            if self.win():
+                self.finished = True
+
+            elif self.loose():
+                self.finished = True
+
         return None
 
     # Process the command entered by the player
@@ -312,6 +392,29 @@ class Game:
         print("Entrez 'help' si vous avez besoin d'aide.")
         
         print(self.player.current_room.get_long_description())
+
+    def win(self):
+        current_room = self.player.current_room.name
+        score = self.player.score()
+
+        if current_room == "Sortie":
+            if score >= self.player.points_min :
+                print("\n🎉 Félicitations ! Vous avez complété toutes les quêtes.")
+                print("🏆 Vous avez gagné la partie !\n")
+                
+                return True
+    
+    def loose(self):
+        current_room = self.player.current_room.name
+        score = self.player.score()
+
+        if current_room == "Sortie":
+            if score < self.player.points_min :
+                print("\n☠️  Vous vous êtes aventuré vers la sortie sans avoir complété toute les quetes...")
+                print("La prison se referme sur vous. Vous êtes perdu.\n")
+                return True
+
+        return False
 
 def main():
     # Create a game object and play the game

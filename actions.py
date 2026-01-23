@@ -283,18 +283,26 @@ class Actions:
         player = game.player
         room = game.player.current_room
 
-        item = player.inventory[item_name]
-        poids = player.get_current_weight()
-
         if item_name not in player.inventory:
             print(f"\nL'item '{item_name}' n'est pas dans votre inventaire.\n")       # objet pas dans l'inventaire
             return False
         
+        item = player.inventory[item_name]
         poids = player.get_current_weight() - item.weight
         item = player.inventory.pop(item_name)
         room.inventory[item_name] = item
 
-        print(f"\nVous avez jeté cet objet : {item_name}. \nVoici le poids de votre invenaire actuellement : {poids}/{player.poids_max} kg.\n") 
+        print(f"\nVous avez jeté cet objet : {item_name}. \nVoici le poids de votre invenaire actuellement : {poids}/{player.poids_max} kg.\n")
+
+        room = game.rooms[8]
+        if game.player.current_room is room :
+            player.quest_manager.check_action_objectives("drop", item_name)
+            game.player.teleport_to_exit(game.rooms[10])
+
+        room2 = game.rooms[2]
+        if game.player.current_room is room2 :
+            player.quest_manager.check_action_objectives("drop", item_name)
+        
         return True
     
     @staticmethod
@@ -512,4 +520,25 @@ class Actions:
 
         # Show all rewards
         game.player.show_rewards()
+        return True
+    
+    def points(game, list_of_words, number_of_parameters):
+        n = len(list_of_words)
+        if n != number_of_parameters + 1:
+            command_word = list_of_words[0]
+            print(MSG0.format(command_word=command_word))
+            return False
+        
+        game.player.show_points()
+        return True
+
+    def activate_all_quests(game, list_of_words, number_of_parameters):
+        # If the number of parameters is incorrect, print an error message and return False.
+        n = len(list_of_words)
+        if n < number_of_parameters + 1:
+            command_word = list_of_words[0]
+            print(MSG1.format(command_word=command_word))
+            return False
+
+        game.player.quest_manager.activate_all_quests()
         return True
