@@ -1,4 +1,5 @@
 # Description: Game class
+""" Define the Game class """
 
 # Import modules
 
@@ -12,6 +13,30 @@ from quest import Quest
 from config import DEBUG
 
 class Game:
+    """
+    This class represents a game. 
+    Attributes:
+        finished (bool).
+        rooms (lst) : list of rooms.
+        commands (dict) : dict of commands.
+        player.
+        directions_valides (set) : set of good directions.
+    Methods:
+        __init__(self) : The constructor.
+        setup(self, player_name=None) : setup.
+        _setup_commands(self) : setup commands.
+        _setup_rooms(self) : setup rooms.
+        _setup_player(self, player_name) : setup player.
+        _setup_items(self) : setup items.
+        _setup_characters(self) : setup characters.
+        _setup_quests(self) : setup quests.
+        play(self) : play the game.
+        process_command(self, command_string)
+        win(self) : way to win.
+        loose(self) : way to loose.
+        print_welcone(self) : print welcome.
+
+    """
 
     # Constructor
     def __init__(self):
@@ -20,7 +45,7 @@ class Game:
         self.commands = {}
         self.player = None
         self.directions_valides = set()
-    
+
     # Setup the game
     def setup(self, player_name=None):
         """Initialize the game with rooms, commands, and quests."""
@@ -98,14 +123,14 @@ class Game:
                                                         , " : activer toutes les quetes"
                                                         , Actions.activate_all_quests
                                                         , 0)
-        
+
     # Setup rooms
     def _setup_rooms(self):
         """Initialize all rooms and their exits."""
 
         s = "dans la salle principale. Immense et désert, le réfectoire résonne d un silence oppressant. Les tables en métal, rayées et poisseuses, alignent leurs ombres sous des néons vacillants. Une odeur rance flotte encore, comme un souvenir de repas forcés. Au fond, les portes des cuisines grincent doucement, agitées par un courant d air invisible. L endroit semble vide… mais chaque bruit ici paraît écouter."
         hall = Room("Salle Principale", s)
-        
+
         s = "dans la cuisine. Plongée dans une lumière blafarde, les néons clignotant au-dessus de plans de travail couverts de taches brunâtres. Une odeur lourde de graisse rance et de viande avariée vous prend à la gorge. Dans le silence, un ustensile glisse lentement au sol… alors que personne n est là."
         cuisine = Room("Cuisine", s)
 
@@ -114,13 +139,13 @@ class Game:
 
         s = "à l infirmerie. Eclairée par une lampe vacillante qui projette des ombres longues sur les lits aux draps froissés et tachés. Les armoires médicales sont entrouvertes, laissant pendre des instruments qui oscillent lentement comme s ils venaient d être utilisés. Une odeur métallique flotte dans l air… et un lit au fond semble encore s affaisser sous un poids invisible."
         infirmerie = Room("Infirmerie", s)
-    
+
         s = "à l accueil. Déserte, les chaises renversées et les vitres blindées couvertes de traces de mains qui semblent s être agrippées dans la panique. Le vieux ventilateur au plafond tourne par à-coups, émettant un grincement régulier qui résonne dans le hall vide. Derrière le comptoir obscurci, vous croyez apercevoir une silhouette immobile… mais en clignant des yeux, elle a disparu."
         accueil = Room("Accueil", s)
 
         s = "Reserve", "dans la réserve. Encombrée de caisses poussiéreuses et de sacs éventrés, laissant s échapper une odeur d humidité et de moisissure. Les ampoules n éclairent qu un mince couloir entre les étagères tordues, où chaque pas résonne anormalement fort. Au fond, une porte métallique vibre imperceptiblement… comme si quelque chose frappait faiblement derrière."
         reserve = Room("Réserve", s)
-        
+
         s = "en haut de l escalier. Consistué de béton, il descend dans une obscurité épaisse, chaque marche résonnant d un écho creux comme si quelqu un marchait juste derrière vous. La rampe froide est couverte de traces sombres que vous préférez ne pas identifier. Un souffle glacial remonte lentement du bas… pourtant rien ne bouge dans les profondeurs."
         escaliersH = Room("Escaliers Haut", s)
 
@@ -135,27 +160,50 @@ class Game:
 
         s = "à la sortie. Une lourde grille s est abattue, scellant le passage comme si la prison elle-même refusait de vous laisser partir. De l autre côté, la lumière vacille et projette des ombres qui semblent se rapprocher lentement. Quand vous touchez les barreaux, un frisson glacial remonte votre bras… comme un avertissement."
         sortie = Room("Sortie", s)
-        
-        for room in [hall, cuisine, parloir, infirmerie, accueil, reserve, escaliersH, escaliersB, cellule, ma_cellule, sortie]:
+
+        salle = [hall, cuisine, parloir, infirmerie, accueil, reserve, escaliersH, escaliersB, cellule, ma_cellule, sortie]
+        for room in salle:
             self.rooms.append(room)
 
         # Create exits for rooms
 
-        hall.exits = {"N" : parloir, "E" : infirmerie, "S" : escaliersB, "O" : cuisine, "Up" : None, "Down" : None}
-        cuisine.exits = {"N" : reserve, "E" : hall, "S" : escaliersB, "O" : None, "Up" : None, "Down" : None}
-        parloir.exits = {"N" : accueil, "E" : None, "S" : hall, "O" : None, "Up" : None, "Down" : None}
-        infirmerie.exits = {"N" : accueil, "E" : None, "S" : None, "O" : hall, "Up" : None, "Down" : None}
-        accueil.exits = {"N" : None, "E" : infirmerie, "S" : parloir, "O" : None, "Up" : None, "Down" : None}
-        reserve.exits = {"N" : None, "E" : accueil, "S" : cuisine, "O" : None, "Up" : None, "Down" : None}
-        escaliersH.exits = {"N" : None, "E" : cellule, "S" : ma_cellule, "O" : None, "Up" : None, "Down" : escaliersB}
-        escaliersB.exits = {"N" : cuisine, "E" : hall, "S" : None, "O" : None, "Up" : escaliersH, "Down" : None}
-        cellule.exits = {"N" : None, "E" : None, "S" : None, "O" : escaliersH, "Up" : None, "Down" : None}
-        ma_cellule.exits = {"N" : escaliersH, "E" : None, "S" : None, "O" : None, "Up" : None, "Down" : None}
-        sortie.exits = {"N" : None, "E" : None, "S" : None, "O" : None, "Up" : None, "Down" : None}
+        hall.exits = {"N" : parloir, "E" : infirmerie, "S" : escaliersB,
+                      "O" : cuisine, "Up" : None, "Down" : None}
 
+        cuisine.exits = {"N" : reserve, "E" : hall, "S" : escaliersB,
+                         "O" : None, "Up" : None, "Down" : None}
+
+        parloir.exits = {"N" : accueil, "E" : None, "S" : hall,
+                         "O" : None, "Up" : None, "Down" : None}
+
+        infirmerie.exits = {"N" : accueil, "E" : None, "S" : None,
+                            "O" : hall, "Up" : None, "Down" : None}
+
+        accueil.exits = {"N" : None, "E" : infirmerie, "S" : parloir,
+                         "O" : None, "Up" : None, "Down" : None}
+
+        reserve.exits = {"N" : None, "E" : accueil, "S" : cuisine,
+                         "O" : None, "Up" : None, "Down" : None}
+
+        escaliersH.exits = {"N" : None, "E" : cellule, "S" : ma_cellule,
+                            "O" : None, "Up" : None, "Down" : escaliersB}
+
+        escaliersB.exits = {"N" : cuisine, "E" : hall, "S" : None,
+                            "O" : None, "Up" : escaliersH, "Down" : None}
+
+        cellule.exits = {"N" : None, "E" : None, "S" : None,
+                         "O" : escaliersH, "Up" : None, "Down" : None}
+
+        ma_cellule.exits = {"N" : escaliersH, "E" : None, "S" : None,
+                            "O" : None, "Up" : None, "Down" : None}
+
+        sortie.exits = {"N" : None, "E" : None, "S" : None,
+                        "O" : None, "Up" : None, "Down" : None}
 
     # Setup items
     def _setup_items(self):
+        """Initialize all items."""
+
         parloir = self.rooms[2]
         infirmerie = self.rooms[3]
         accueil = self.rooms[4]
@@ -169,10 +217,11 @@ class Game:
             "un ancien téléphone à touches est posé",
             1
         )
-        
+
         cellule.inventory["coffre"] = Item(
             "coffre",
-            "Un énorme coffre habritant surement l'objet que vous cherchez. Néanmoins, un problème, comment allez vous l'ouvrir ?",
+            "Un énorme coffre habritant surement l'objet que vous cherchez. " \
+            "Néanmoins, un problème, comment allez vous l'ouvrir ?",
             30
         )
 
@@ -221,29 +270,35 @@ class Game:
 
     # Setup characters
     def _setup_characters(self):
+        """Initialize characters."""
+
         hall = self.rooms[0]
         parloir = self.rooms[2]
         cellule = self.rooms[8]
-        
+
         hall.characters["Guardien"] = Character(
             "Guardien",
             "votre seul allié dans cet enfer...",
             hall,
-            ["Salut, je vais te donner le secret pour sortir", "Seul l'objet magique te guidera à la sortie !"]
+            ["Salut, je vais te donner le secret pour sortir",
+             "Seul l'objet magique te guidera à la sortie !"]
         )
 
         parloir.characters["Sage"] = Character(
             "Sage",
             "le plus ancien détenu, aucun secret ne lui échappe",
             parloir,
-            ["Je connais le seul moyen de trouver de quoi sortir", "Si tu le veux, ramène moi de quoi manger..."]
+            ["Je connais le seul moyen de trouver de quoi sortir",
+             "Si tu le veux, ramène moi de quoi manger..."]
         )
 
         cellule.characters["Prisonnier"] = Character(
             "Prisonnier",
             "un homme douteux, tapis dans le noir",
             cellule,
-            ["Le coffre que tu recherches ici", "Je n'ai jamais réussi à l'ouvrir", "Au fait, sais-tu où est mon livre ?"]
+            ["Le coffre que tu recherches ici",
+             "Je n'ai jamais réussi à l'ouvrir",
+             "Au fait, sais-tu où est mon livre ?"]
         )
 
     # Setup quests
@@ -267,10 +322,10 @@ class Game:
         )
 
         exploration_quest2 = Quest(
-            title="Visiteur",
-            description="Aller dans votre cellule",
-            objectives=["Visiter ma_cellule"],
-            reward="Le lieu sûr",
+            title="Vagabond",
+            description="Faire 3 déplacements",
+            objectives=["Se déplacer 3"],
+            reward="Maitre du déplacement",
             points = 10
         )
 
@@ -350,10 +405,11 @@ class Game:
         self.player.quest_manager.add_quest(interaction_quest1)
         self.player.quest_manager.add_quest(interaction_quest2)
         self.player.quest_manager.add_quest(NourrireSage)
-        
 
     # Play the game
     def play(self):
+        """Main function to play the game."""
+
         self.setup()
         self.print_welcome()
         # Loop until the game is finished
@@ -370,6 +426,7 @@ class Game:
 
     # Process the command entered by the player
     def process_command(self, command_string) -> None:
+        """Check the command entered."""
 
         # Split the command string into a list of words
         list_of_words = command_string.split(" ")
@@ -384,16 +441,20 @@ class Game:
         else:
             command = self.commands[command_word]
             command.action(self, list_of_words, command.number_of_parameters)
-    
+
     # Print the welcome message
     def print_welcome(self):
+        """Begin of the game."""
+
         print(f"\nBienvenue {self.player.name} dans ce jeu d'aventure !")
         print("Quand tu ouvres les yeux, tu es affalé sur une table froide du réfectoire. Le silence est si lourd qu il finit par bourdonner dans tes oreilles. Les rangées de chaises renversées, les plateaux éparpillés et l odeur de métal rouillé te donnent l impression que la prison a été abandonnée depuis longtemps. Pourtant… quelque chose cloche. Dans les coins du réfectoire, les ombres semblent trop épaisses, comme si elles retenaient leur souffle à ton passage. Ici, rien n est vraiment désert. Et si tu veux t en sortir, tu vas devoir comprendre ce qui s est glissé entre ces murs — et surtout, ce qui t observe déjà.")
         print("Entrez 'help' si vous avez besoin d'aide.")
-        
+
         print(self.player.current_room.get_long_description())
 
     def win(self):
+        """Check if you win."""
+
         current_room = self.player.current_room.name
         score = self.player.score()
 
@@ -401,24 +462,27 @@ class Game:
             if score >= self.player.points_min :
                 print("\n🎉 Félicitations ! Vous avez complété toutes les quêtes.")
                 print("🏆 Vous avez gagné la partie !\n")
-                
+
                 return True
-    
+
     def loose(self):
+        """Check if you loose."""
+
         current_room = self.player.current_room.name
         score = self.player.score()
 
         if current_room == "Sortie":
             if score < self.player.points_min :
-                print("\n☠️  Vous vous êtes aventuré vers la sortie sans avoir complété toute les quetes...")
+                print("\n☠️  Vous vous êtes aventuré vers la sortie sans les ressources nécessaires.")
                 print("La prison se referme sur vous. Vous êtes perdu.\n")
                 return True
 
         return False
 
 def main():
+    """The Game."""
     # Create a game object and play the game
     Game().play()
-    
+
 if __name__ == "__main__":
     main()

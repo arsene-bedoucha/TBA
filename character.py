@@ -1,8 +1,25 @@
 # character.py
+''' Define the Character class '''
+
 import random
 from config import DEBUG
 
 class Character:
+    """
+    This class represents a character. 
+    A character is composed of a name, a description, a room and a message.
+    Attributes:
+        name : name of the room.
+        current_room : room where the player is in.
+        desciprion : description of the PNJ.
+        message : Things he says.
+    Methods:
+        __init__(self, command_word, help_string, action, number_of_parameters) : The constructor.
+        move(self) : move the PNJ.
+        __str__(self) : The string representation of the character.
+        get_msg(self) : Print the message.
+    """
+
     def __init__(self, name : str, description : str, current_room : None, msgs : list[str]):
         self.name = name
         self.description = description
@@ -10,6 +27,8 @@ class Character:
         self.msgs = msgs
 
     def move(self):
+        '''Move the character during the game.'''
+
         l = [True, False]
         if random.choice(l) is False:
             if DEBUG:
@@ -36,6 +55,8 @@ class Character:
         return f"{self.name} : {self.description}"
 
     def get_msg(self):
+        '''Show the message when you talk with him.'''
+
         if not self.msgs:
             return
 
