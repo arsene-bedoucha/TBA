@@ -16,7 +16,7 @@ Bienvenue dans Cellule Maudite. Le jeu se lance dans le terminal et tu joues uni
 
 Ton but est simple : Sortir de la prison.
 
-Mais si tu atteins la sortie sans être prêt tu perds direct.
+Mais si tu atteins la sortie sans être prêt tu perds.
 
 Univers
 -------
@@ -75,11 +75,11 @@ Voici les objets présents dans le jeu et à quoi ils servent :
 
 Clé : sert à valider une quête liée à la progression et permet d’avancer vers la sortie  
 Plan : sert à compléter une quête et aide à “réussir l’exploration” du jeu  
-medicament : sert à compléter une quête liée à l'infirmerie  
+Medicament : sert à compléter une quête liée à l'infirmerie  
 Livre : sert à valider une quête liée à un objet spécifique à récupérer  
 Panier : sert à compléter une quête d’objet à trouver  
 Coffre : objet important dans le jeu, lié à une quête où tu dois l’ouvrir
-téléphone : sert dans une quête.
+Téléphone : sert dans une quête.
 
 Quêtes
 ------
@@ -138,6 +138,9 @@ Guide Developpeur
 
 Perspectives de Développement
 -----------------------------
+
+Lien vidéo : https://drive.google.com/file/d/1tYDEz3AsKdFBmGGflkRaQpybt4Gn2AvL/view?usp=drive_link
+Note Pylint : 9,1/10.
 
 Voici quelques améliorations qu’on aurait pu ajouter à Cellule Maudite.
 
