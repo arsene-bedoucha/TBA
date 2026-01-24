@@ -139,6 +139,7 @@ Guide Developpeur
 Perspectives de Développement
 -----------------------------
 
+Vidéo disponible sur GitHub mais aussi avec le lien suivant.
 Lien vidéo : https://drive.google.com/file/d/1tYDEz3AsKdFBmGGflkRaQpybt4Gn2AvL/view?usp=drive_link
 Note Pylint : 9,1/10.
 
